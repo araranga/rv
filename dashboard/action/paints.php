@@ -1,0 +1,155 @@
+﻿<?php
+session_start();
+require_once("./connect.php");
+require_once("./function.php");
+$tbl = "joomgallery";
+$primary = "id";
+/*SQL*/
+$refresh = 0;
+$postmain = $_POST;
+if($_POST['submit']!='' && $_POST['task']=='add')
+{
+	unset($_POST['submit']);
+	unset($_POST['task']);
+
+
+
+$target_dir = "uploads/";
+
+var_dump($_FILES);
+if(!empty($_FILES["image"]["name"])){
+
+	$datafile = explode(".", $_FILES["image"]["name"]);
+	$finale = time().rand().".".end($datafile);
+	$target_file = $target_dir .$finale;
+	if (move_uploaded_file($_FILES["image"]["tmp_name"], $target_file)) {
+
+	}
+	$_POST['imgfilename'] = $finale;
+
+}
+
+	
+
+
+
+	unset($_POST['files']);
+    unset($_POST['image']);
+
+	$fields = formquery($_POST);
+
+
+
+	mysql_query_md("INSERT INTO $tbl SET $fields");
+
+	#setcookie('noti', "Done adding data",60, "/");
+
+	$_SESSION['noti'] = "Done adding data.";
+
+	$refresh = 1;
+}
+
+if($_POST['submit']!='' && $_POST['task']=='edit')
+{
+	unset($_POST['submit']);
+	unset($_POST['task']);
+
+
+
+
+
+$target_dir = "uploads/";
+
+if(!empty($_FILES["image"]["name"])){
+
+	$datafile = explode(".", $_FILES["image"]["name"]);
+	$finale = time().rand().".".end($datafile);
+	$target_file = $target_dir .$finale;
+	if (move_uploaded_file($_FILES["image"]["tmp_name"], $target_file)) {
+
+	}
+	$_POST['imgfilename'] = $finale;
+
+}
+
+	
+
+
+
+	unset($_POST['files']);
+    unset($_POST['image']);
+
+
+
+
+
+
+
+
+
+
+
+	$fields = formquery($_POST);
+	mysql_query_md("UPDATE $tbl SET $fields WHERE $primary=".$_POST[$primary]);
+	#setcookie('noti', "Done editing data",60, "/");
+	$_SESSION['noti'] = "Done editing data.";
+	$refresh = 1;
+}
+
+
+if($_POST['submit']!='' && $_POST['task']=='delete')
+{
+	unset($_POST['submit']);
+	unset($_POST['task']);
+	$fields = formquery($_POST);
+	mysql_query_md("DELETE FROM $tbl WHERE $primary=".$_POST[$primary]);
+	$_SESSION['noti'] = "Done deleting data.";
+	$refresh = 1;
+}
+/*SQL*/
+if($refresh){
+
+if($postmain['task']=='add'){
+  $_POST['id'] = getLatestId($tbl,$primary);
+  moveredirect("index.php?pages=".$_REQUEST['pages']."&task=edit&id=".$_POST['id']);
+}
+
+
+if($postmain['task']=='delete'){
+ moveredirect("index.php?pages=".$_REQUEST['pages']);
+}
+
+
+if($postmain['task']=='edit'){
+ moveredirect("index.php?pages=".$_REQUEST['pages']."&task=edit&id=".$_POST['id']);
+}
+
+exit();
+}
+
+if($_SESSION['role']!=1)
+{
+		exit("hey your not allowed here");
+}
+if($_GET['task']=='')
+{
+	
+	include($_GET['pages']."/main.php");
+}
+if($_GET['task']=='add')
+{
+	echo "<a class='goback' href='?pages=".$_GET['pages']."'>Go back</a>";
+	include($_GET['pages']."/add.php");
+}
+if($_GET['task']=='edit')
+{
+	echo "<a class='goback' href='?pages=".$_GET['pages']."'>Go back</a>";
+	include($_GET['pages']."/edit.php");
+}
+if($_GET['task']=='delete')
+{
+	echo "<a class='goback' href='?pages=".$_GET['pages']."'>Go back</a>";
+	include($_GET['pages']."/delete.php");
+}
+
+?>
