@@ -5,18 +5,18 @@
              <a href="http://www.royveneracion.com" class="logo">
                <div class="custom-logo size-auto"></div>
              </a>
-             <form style='width: 150px;' class="searchbox" action="/index.php" method="post" role="search">
+             <form style='width: 150px;' class="searchbox" action="/index.php" method="GET" role="search">
                <input type="text" value="" name="searchword" placeholder="search..." autocomplete="off">
                <button type="reset" value="Reset"></button>
-				<input type="hidden" name="mvc" value="mainsearch">
+				<input type="hidden" name="mvcs" value="mainsearch">
              </form>
-             <select class="menu-responsive">
+             <select class="menu-responsive" onchange="menumobile(this.value)">
                <option value="/" class="level1 active current" selected="selected">Home</option>
                <option value="/articles" class="level1">Articles</option>
                <option value="/cms/art-statement" class="level1">Art Statement</option>
                <option value="/reviews" class="level1 parent">Reviews</option>
 <?php
-  $q = mysql_query_md("SELECT * FROM `content_v2` WHERE catid=11 ORDER BY `content_v2`.`publish_up` DESC LIMIt 5");
+  $q = mysql_query_md("SELECT * FROM `content_v2` WHERE catid=11 ORDER BY `content_v2`.`publish_up` ASC LIMIt 5");
   $news_count = 0;
   while($row=mysql_fetch_md_array($q))
   {
@@ -37,11 +37,15 @@
              <form id="searchbox-40" class="searchbox" action="/index.php" method="GET" role="search">
                <input type="text" value="" name="searchword" placeholder="search..." autocomplete="off">
                <button type="reset" value="Reset"></button>
-               <input type="hidden" name="mvc" value="mainsearch">
+               <input type="hidden" name="mvcs" value="mainsearch">
 
              </form>
              <script src="/Home_files/search.js"></script>
              <script>
+			 function menumobile(url){
+				 
+				 window.location = url;
+			 }
                jQuery(function($) {
                  $('#searchbox-40 input[name=searchword]').search({
                    'url': '/search.php?tmpl=raw&amp;type=json&amp;ordering=&amp;searchphrase=all',

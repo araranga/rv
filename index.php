@@ -134,6 +134,10 @@ $row_art_cat = mysql_fetch_md_array($q);
 					include("pages/home.php");
 				}else{
 					
+					if(!empty($_GET['mvcs'])){
+							$_GET['mvc'] = $_GET['mvcs'];
+					}
+					
 					
 					$url_array = explode("/",$_GET['mvc']);
 					
